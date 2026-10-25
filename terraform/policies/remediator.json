@@ -1,0 +1,59 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "ReadWhatWeCheck",
+      "Effect": "Allow",
+      "Action": [
+        "s3:ListAllMyBuckets", "s3:GetBucketPublicAccessBlock", "s3:GetBucketPolicy",
+        "ec2:DescribeSecurityGroups", "ec2:DescribeInstances", "ec2:DescribeVolumes",
+        "iam:ListUsers", "iam:ListAccessKeys", "iam:GetAccessKeyLastUsed", "iam:GetLoginProfile", "iam:ListMFADevices",
+        "rds:DescribeDBInstances"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "ExactlyTheFixes",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutBucketPublicAccessBlock", "s3:PutBucketPolicy", "s3:DeleteBucketPolicy",
+        "ec2:RevokeSecurityGroupIngress", "ec2:AuthorizeSecurityGroupIngress", "ec2:ModifyInstanceMetadataOptions",
+        "iam:UpdateAccessKey",
+        "rds:ModifyDBInstance"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "OnlyOurOwnFindingsTable",
+      "Effect": "Allow",
+      "Action": ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem", "dynamodb:Query", "dynamodb:Scan"],
+      "Resource": ["${table_arn}", "${table_arn}/index/*"]
+    },
+    {
+      "Sid": "TellHumans",
+      "Effect": "Allow",
+      "Action": "sns:Publish",
+      "Resource": "${topic_arn}"
+    },
+    {
+      "Sid": "WriteLogs",
+      "Effect": "Allow",
+      "Action": ["logs:CreateLogStream", "logs:PutLogEvents"],
+      "Resource": "${log_group_arn}:*"
+    },
+    {
+      "Sid": "NeverDestroyAnything",
+      "Effect": "Deny",
+      "Action": [
+        "s3:DeleteBucket", "s3:DeleteObject", "s3:DeleteObjectVersion", "s3:PutBucketAcl", "s3:PutObjectAcl",
+        "ec2:TerminateInstances", "ec2:StopInstances", "ec2:DeleteSecurityGroup", "ec2:DeleteVolume", "ec2:DeleteSnapshot",
+        "rds:DeleteDBInstance", "rds:DeleteDBCluster", "rds:RebootDBInstance",
+        "iam:DeleteAccessKey", "iam:DeleteUser", "iam:CreateAccessKey", "iam:AttachUserPolicy", "iam:PutUserPolicy",
+        "iam:CreateUser", "iam:CreateRole", "iam:AttachRolePolicy", "iam:PassRole",
+        "dynamodb:DeleteTable", "dynamodb:DeleteItem",
+        "cloudtrail:StopLogging", "cloudtrail:DeleteTrail", "kms:ScheduleKeyDeletion"
+      ],
+      "Resource": "*"
+    }
+  ]
+}

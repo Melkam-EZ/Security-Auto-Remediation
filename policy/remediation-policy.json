@@ -1,0 +1,18 @@
+{
+  "_comment": "What the platform may fix by itself. Changing this file is a reviewed commit + deploy, never a console click.",
+  "regions": ["eu-west-1"],
+  "guard": {"max_auto_per_run": 10, "max_auto_per_hour": 30, "repeat_offender_threshold": 3},
+  "hold": {"rollback_hours": 24, "reject_days": 30},
+  "approvers": [],
+  "rules": {
+    "s3-public-access-block": {"mode": "auto"},
+    "s3-ssl-only":            {"mode": "approve"},
+    "ec2-sg-open-ingress":    {"mode": "auto"},
+    "ec2-imdsv2":             {"mode": "auto"},
+    "ebs-unencrypted":        {"mode": "report"},
+    "iam-stale-access-key":   {"mode": "approve", "params": {"max_age_days": 90}},
+    "iam-user-no-mfa":        {"mode": "report"},
+    "rds-publicly-accessible": {"mode": "approve"}
+  },
+  "exceptions": []
+}
